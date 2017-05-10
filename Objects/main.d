@@ -32,3 +32,4 @@
 .\objects\main.o: .\Hardware\inc\sys.h
 .\objects\main.o: .\Hardware\inc\spi.h
 .\objects\main.o: E:\Programs\MDK\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\main.o: .\Hardware\inc\imu.h
