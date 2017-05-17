@@ -1,4 +1,5 @@
 #include "spi.h"
+
 typedef struct{
 	short Accel[3];//Accel X,Y,Z
 	short Gyro[3];//Gyro X,Y,Z
