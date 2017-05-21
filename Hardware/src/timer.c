@@ -1,98 +1,153 @@
 #include "timer.h"
+#include "stdbool.h"
 
+uint8_t  loop50HzFlag, loop100HzFlag, loop20HzFlag, loop10HzFlag;
+volatile uint16_t loop50HzCnt, loop100HzCnt, loop20HzCnt , loop10HzCnt=0;
 
-//TIM3 PWM部分初始化 
-//PWM输出初始化
-//arr：自动重装值
-//psc：时钟预分频数
-void TIM3_PWM_Init(u16 arr,u16 psc)
-{  
+//1ms interupt
+void TIM4_IRQHandler(void){
+    if( TIM_GetITStatus(TIM4 , TIM_IT_Update) != RESET )
+    {
+			if(++loop100HzCnt * 100 >= (1000))
+			{
+					loop100HzCnt=0;
+					loop100HzFlag=1;
+			}
+			if(++loop50HzCnt * 50 >= (1000))
+			{
+					loop50HzCnt=0;
+					loop50HzFlag=1;
+			}
+			if(++loop20HzCnt * 20 >=1000 )
+			{
+					loop20HzCnt=0;
+					loop20HzFlag=1;
+			}
+			if(++loop10HzCnt * 10 >=1000 )
+			{
+					loop10HzCnt=0;
+					loop10HzFlag=1;
+			}
+
+          TIM_ClearITPendingBit(TIM4 , TIM_FLAG_Update);   //娓呴櫎涓柇鏍囧織
+    }
+}
+
+void TIM3_PWM_Init(u16 arr,u16 psc){
 	GPIO_InitTypeDef GPIO_InitStructure;
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 	TIM_OCInitTypeDef  TIM_OCInitStructure;
-	
 
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);	//使能定时器3时钟
- 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO, ENABLE);  //使能GPIO外设和AFIO复用功能模块时钟
-	
-	//关闭JTAG
+
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);	//使锟杰讹拷时锟斤拷3时锟斤拷
+ 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO, ENABLE);  //使锟斤拷GPIO锟斤拷锟斤拷锟斤拷AFIO锟斤拷锟矫癸拷锟斤拷模锟斤拷时锟斤拷
+
+	//锟截憋拷JTAG
 	//GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
-	
-	//TIM3 复用映射
+
+	//TIM3 锟斤拷锟斤拷映锟斤拷
 	GPIO_PinRemapConfig(GPIO_FullRemap_TIM3, ENABLE);
-	
-	//TIM3初始化
-	TIM_TimeBaseStructure.TIM_Period = arr; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值
-	TIM_TimeBaseStructure.TIM_Prescaler =psc; //设置用来作为TIMx时钟频率除数的预分频值 
-	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
-	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
-	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
-	
-	
+
+	//TIM3锟斤拷始锟斤拷
+	TIM_TimeBaseStructure.TIM_Period = arr; //锟斤拷锟斤拷锟斤拷锟斤拷一锟斤拷锟斤拷锟斤拷锟铰硷拷装锟斤拷锟筋动锟斤拷锟皆讹拷锟斤拷装锟截寄达拷锟斤拷锟斤拷锟节碉拷值
+	TIM_TimeBaseStructure.TIM_Prescaler =psc; //锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷为TIMx时锟斤拷频锟绞筹拷锟斤拷锟斤拷预锟斤拷频值
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //锟斤拷锟斤拷时锟接分革拷:TDTS = Tck_tim
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM锟斤拷锟较硷拷锟斤拷模式
+	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure); //锟斤拷锟斤拷TIM_TimeBaseInitStruct锟斤拷指锟斤拷锟侥诧拷锟斤拷锟斤拷始锟斤拷TIMx锟斤拷时锟斤拷锟斤拷锟斤拷锟斤拷位
+
+
 	//Chennel 1
-	//设置该引脚为复用输出功能,输出TIM3 CH1的PWM脉冲波形GPIOC6
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6; 
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP; 
+	//锟斤拷锟矫革拷锟斤拷锟斤拷为锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷,锟斤拷锟斤拷TIM3 CH1锟斤拷PWM锟斤拷锟藉波锟斤拷GPIOC6
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
-	
-	//初始化TIM3 Channel 1 PWM模式	 
-	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1; //选择定时器模式:TIM脉冲宽度调制模式2
- 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //比较输出使能
-	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High; //输出极性:TIM输出比较极性高
-	TIM_OC1Init(TIM3, &TIM_OCInitStructure);  //根据T指定的参数初始化外设TIM3 OC1
 
-	TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);  //使能TIM3在CCR1上的预装载寄存器
- 	
-	//Chennel 2 	
-   //设置该引脚为复用输出功能,输出TIM3 CH2的PWM脉冲波形	GPIOC7
+	//锟斤拷始锟斤拷TIM3 Channel 1 PWM模式
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1; //选锟斤拷锟斤拷时锟斤拷模式:TIM锟斤拷锟斤拷锟斤拷锟饺碉拷锟斤拷模式2
+ 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //锟饺斤拷锟斤拷锟斤拷使锟斤拷
+	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High; //锟斤拷锟斤拷锟斤拷锟斤拷:TIM锟斤拷锟斤拷锟饺较硷拷锟皆革拷
+	TIM_OC1Init(TIM3, &TIM_OCInitStructure);  //锟斤拷锟斤拷T指锟斤拷锟侥诧拷锟斤拷锟斤拷始锟斤拷锟斤拷锟斤拷TIM3 OC1
+
+	TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);  //使锟斤拷TIM3锟斤拷CCR1锟较碉拷预装锟截寄达拷锟斤拷
+
+	//Chennel 2
+   //锟斤拷锟矫革拷锟斤拷锟斤拷为锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷,锟斤拷锟斤拷TIM3 CH2锟斤拷PWM锟斤拷锟藉波锟斤拷	GPIOC7
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
- 
-	//初始化TIM3 Channel 2 PWM模式	 
-	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1; //选择定时器模式:TIM脉冲宽度调制模式2
- 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //比较输出使能
-	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High; //输出极性:TIM输出比较极性高
-	TIM_OC2Init(TIM3, &TIM_OCInitStructure);  //根据T指定的参数初始化外设TIM3 OC2
 
-	TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Enable);  //使能TIM3在CCR2上的预装载寄存器
- 
-	
+	//锟斤拷始锟斤拷TIM3 Channel 2 PWM模式
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1; //选锟斤拷锟斤拷时锟斤拷模式:TIM锟斤拷锟斤拷锟斤拷锟饺碉拷锟斤拷模式2
+ 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //锟饺斤拷锟斤拷锟斤拷使锟斤拷
+	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High; //锟斤拷锟斤拷锟斤拷锟斤拷:TIM锟斤拷锟斤拷锟饺较硷拷锟皆革拷
+	TIM_OC2Init(TIM3, &TIM_OCInitStructure);  //锟斤拷锟斤拷T指锟斤拷锟侥诧拷锟斤拷锟斤拷始锟斤拷锟斤拷锟斤拷TIM3 OC2
+
+	TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Enable);  //使锟斤拷TIM3锟斤拷CCR2锟较碉拷预装锟截寄达拷锟斤拷
+
+
 	//Chennel 3
-	//设置该引脚为复用输出功能,输出TIM3 CH3的PWM脉冲波形GPIOC8
+	//锟斤拷锟矫革拷锟斤拷锟斤拷为锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷,锟斤拷锟斤拷TIM3 CH3锟斤拷PWM锟斤拷锟藉波锟斤拷GPIOC8
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP; 
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
- 
-	//初始化TIM3 Channel 3 PWM模式	 
-	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1; //选择定时器模式:TIM脉冲宽度调制模式2
- 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //比较输出使能
-	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High; //输出极性:TIM输出比较极性高
-	TIM_OC3Init(TIM3, &TIM_OCInitStructure);  //根据T指定的参数初始化外设TIM3 OC3
 
-	TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);  //使能TIM3在CCR2上的预装载寄存器
- 
- 
+	//锟斤拷始锟斤拷TIM3 Channel 3 PWM模式
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1; //选锟斤拷锟斤拷时锟斤拷模式:TIM锟斤拷锟斤拷锟斤拷锟饺碉拷锟斤拷模式2
+ 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //锟饺斤拷锟斤拷锟斤拷使锟斤拷
+	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High; //锟斤拷锟斤拷锟斤拷锟斤拷:TIM锟斤拷锟斤拷锟饺较硷拷锟皆革拷
+	TIM_OC3Init(TIM3, &TIM_OCInitStructure);  //锟斤拷锟斤拷T指锟斤拷锟侥诧拷锟斤拷锟斤拷始锟斤拷锟斤拷锟斤拷TIM3 OC3
+
+	TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);  //使锟斤拷TIM3锟斤拷CCR2锟较碉拷预装锟截寄达拷锟斤拷
+
+
  	//Chennel 4
-   //设置该引脚为复用输出功能,输出TIM3 CH3的PWM脉冲波形	GPIOC9
+   //锟斤拷锟矫革拷锟斤拷锟斤拷为锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷,锟斤拷锟斤拷TIM3 CH3锟斤拷PWM锟斤拷锟藉波锟斤拷	GPIOC9
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;  
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
- 
-	//初始化TIM3 Channel 4 PWM模式	 
-	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1; //选择定时器模式:TIM脉冲宽度调制模式2
- 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //比较输出使能
-	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High; //输出极性:TIM输出比较极性高
-	TIM_OC4Init(TIM3, &TIM_OCInitStructure);  //根据T指定的参数初始化外设TIM3 OC4
 
-	TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Enable);  //使能TIM3在CCR4上的预装载寄存器
- 
- 
-    //使能TIM3
-	TIM_Cmd(TIM3, ENABLE); 
-	
+	//锟斤拷始锟斤拷TIM3 Channel 4 PWM模式
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1; //选锟斤拷锟斤拷时锟斤拷模式:TIM锟斤拷锟斤拷锟斤拷锟饺碉拷锟斤拷模式2
+ 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //锟饺斤拷锟斤拷锟斤拷使锟斤拷
+	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High; //锟斤拷锟斤拷锟斤拷锟斤拷:TIM锟斤拷锟斤拷锟饺较硷拷锟皆革拷
+	TIM_OC4Init(TIM3, &TIM_OCInitStructure);  //锟斤拷锟斤拷T指锟斤拷锟侥诧拷锟斤拷锟斤拷始锟斤拷锟斤拷锟斤拷TIM3 OC4
+
+	TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Enable);  //使锟斤拷TIM3锟斤拷CCR4锟较碉拷预装锟截寄达拷锟斤拷
+
+
+    //使锟斤拷TIM3
+	TIM_Cmd(TIM3, ENABLE);
+
+}
+
+//TIM4 Initialization for IMU interupt and MPU9250
+//freq: 100hz
+void TIM4_Init(void) {
+	//TIM4 init
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4,ENABLE);  //鎵撳紑鏃堕挓
+	TIM_DeInit(TIM4);
+	TIM_TimeBaseStructure.TIM_Period = 999;
+	TIM_TimeBaseStructure.TIM_Prescaler = 72;//瀹氭椂1ms
+	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+
+	TIM_TimeBaseInit(TIM4,&TIM_TimeBaseStructure);
+	TIM_ClearFlag(TIM4,TIM_FLAG_Update);
+
+	TIM_ITConfig(TIM4,TIM_IT_Update,ENABLE);
+	TIM_Cmd(TIM4,ENABLE);
+
+	//TIM4 NVIC Configuration
+	NVIC_InitTypeDef NVIC_InitStructure;
+  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+	NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;//椋炴帶涓诲惊鐜熀鍑嗗畾鏃跺櫒锛屼紭鍏堢骇楂樹簬涓插彛鎵撳嵃
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
 }

@@ -30,3 +30,4 @@
 .\objects\timer.o: .\Libraries\inc\stm32f10x_usart.h
 .\objects\timer.o: .\Libraries\inc\stm32f10x_wwdg.h
 .\objects\timer.o: .\Libraries\inc\misc.h
+.\objects\timer.o: E:\Programs\MDK\ARM\ARMCC\Bin\..\include\stdbool.h

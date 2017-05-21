@@ -1,19 +1,22 @@
 #include "spi.h"
+
 typedef struct{
 	short Accel[3];//Accel X,Y,Z
 	short Gyro[3];//Gyro X,Y,Z
-	short Mag[3];	//Mag X,Y,Z	
-}MPU_value;
-MPU_value mpu_value;          //9ÖáÊý¾Ý
-unsigned char BUF[6];       //½ÓÊÕÊý¾Ý»º´æÇø
+	short Mag[3];	//Mag X,Y,Z
+}MPU_source_value;
+
+MPU_source_value mpu_source_value;          //9ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+MPU_value mpu_value;
+unsigned char BUF[6];       //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý»ï¿½ï¿½ï¿½ï¿½ï¿½
 /***************************************************************/
 void spi_Init()
 {
 	SPI_InitTypeDef SPI_InitStructure;
 	GPIO_InitTypeDef GPIO_InitStructure;
-	
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1|RCC_APB2Periph_GPIOA, ENABLE);	
-	//GPIO¿ÚÅäÖÃÉèÖÃ//
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1|RCC_APB2Periph_GPIOA, ENABLE);
+	//GPIOï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½//
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
@@ -25,71 +28,71 @@ void spi_Init()
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 	GPIO_SetBits(GPIOA,GPIO_Pin_0);
-	 /* SPI1 configuration */ 
+	 /* SPI1 configuration */
   SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
-  SPI_InitStructure.SPI_Mode = SPI_Mode_Master;		//Ö÷»úÄ£Ê½
-  SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b; //8Î»Êý¾Ý
-  SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;//SPI_CPOL_High=Ä£Ê½3£¬Ê±ÖÓ¿ÕÏÐÎª¸ß //SPI_CPOL_Low=Ä£Ê½0£¬Ê±ÖÓ¿ÕÏÐÎªµÍ
+  SPI_InitStructure.SPI_Mode = SPI_Mode_Master;		//ï¿½ï¿½ï¿½ï¿½Ä£Ê½
+  SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b; //8Î»ï¿½ï¿½ï¿½ï¿½
+  SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;//SPI_CPOL_High=Ä£Ê½3ï¿½ï¿½Ê±ï¿½Ó¿ï¿½ï¿½ï¿½Îªï¿½ï¿½ //SPI_CPOL_Low=Ä£Ê½0ï¿½ï¿½Ê±ï¿½Ó¿ï¿½ï¿½ï¿½Îªï¿½ï¿½
   SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;//SPI_CPHA_2Edge;//SPI_CPHA_1Edge, SPI_CPHA_2Edge;
   SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;//SPI_NSS_Soft;//SPI_NSS_Hard
   SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8;//SPI_BaudRatePrescaler_2=32M;//SPI_BaudRatePrescaler_4=18MHz
-  SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;//Êý¾Ý´Ó¸ßÎ»¿ªÊ¼·¢ËÍ
+  SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;//ï¿½ï¿½ï¿½Ý´Ó¸ï¿½Î»ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
   SPI_InitStructure.SPI_CRCPolynomial = 7;
-	
-	SPI_Init(SPI1, &SPI_InitStructure);  //¸ù¾ÝSPI_InitStructÖÐÖ¸¶¨µÄ²ÎÊý³õÊ¼»¯ÍâÉèSPIx¼Ä´æÆ÷
-	SPI_Cmd(SPI1, ENABLE); //Ê¹ÄÜSPIÍâÉè
+
+	SPI_Init(SPI1, &SPI_InitStructure);  //ï¿½ï¿½ï¿½ï¿½SPI_InitStructï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½SPIxï¿½Ä´ï¿½ï¿½ï¿½
+	SPI_Cmd(SPI1, ENABLE); //Ê¹ï¿½ï¿½SPIï¿½ï¿½ï¿½ï¿½
 }
 /***************************************************************/
-//SPIx 
-//TxData:·¢ËÍÒ»¸ö×Ö½Ú
-//·µ»ØÖµ:data
+//SPIx
+//TxData:ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö½ï¿½
+//ï¿½ï¿½ï¿½ï¿½Öµ:data
 /***************************************************************/
 static u8 SPI1_ReadWriteByte(u8 TxData)
-{		
-	u8 retry=0;				 	
-	while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET) //µÈ´ýSPI·¢ËÍ±êÖ¾Î»¿Õ
+{
+	u8 retry=0;
+	while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET) //ï¿½È´ï¿½SPIï¿½ï¿½ï¿½Í±ï¿½Ö¾Î»ï¿½ï¿½
 		{
 		retry++;
 		if(retry>200)return 0;
-		}			  
-	SPI_I2S_SendData(SPI1, TxData); //·¢ËÍÊý¾Ý
+		}
+	SPI_I2S_SendData(SPI1, TxData); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	retry=0;
 
-	while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET) //µÈ´ýSPI½ÓÊÕ±êÖ¾Î»¿Õ
+	while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET) //ï¿½È´ï¿½SPIï¿½ï¿½ï¿½Õ±ï¿½Ö¾Î»ï¿½ï¿½
 		{
 		retry++;
 		if(retry>200)return 0;
-		}	  						    
-	return SPI_I2S_ReceiveData(SPI1); //½ÓÊÕÊý¾Ý					    
+		}
+	return SPI_I2S_ReceiveData(SPI1); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 }
 /***************************************************************/
-//SPI·¢ËÍ
+//SPIï¿½ï¿½ï¿½ï¿½
 //reg: addr
-//value:Êý¾Ý
+//value:ï¿½ï¿½ï¿½ï¿½
 /***************************************************************/
 u8 MPU9250_Write_Reg(u8 reg,u8 value)
 {
 	u8 status;
 		MPU_9250_ENABLE;   //	MPU9250_CS=0;  //Æ¬Ñ¡MPU9250
-	status=SPI1_ReadWriteByte(reg); //·¢ËÍregµØÖ·
-	SPI1_ReadWriteByte(value);//·¢ËÍÊý¾Ý
-	MPU_9250_DISENABLE;//	MPU9250_CS=1;  //Ê§ÄÜMPU9250
+	status=SPI1_ReadWriteByte(reg); //ï¿½ï¿½ï¿½ï¿½regï¿½ï¿½Ö·
+	SPI1_ReadWriteByte(value);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	MPU_9250_DISENABLE;//	MPU9250_CS=1;  //Ê§ï¿½ï¿½MPU9250
 	return(status);//
 }
 //---------------------------------------------------------------//
-//SPI¶ÁÈ¡
+//SPIï¿½ï¿½È¡
 //reg: addr
 u8 MPU9250_Read_Reg(u8 reg)
 {
 	  u8 reg_val;
 		MPU_9250_ENABLE;//	MPU9250_CS=0;  //Æ¬Ñ¡MPU9250
-	  SPI1_ReadWriteByte(reg|0x80); //regµØÖ·+¶ÁÃüÁî
-	  reg_val=SPI1_ReadWriteByte(0xff);//ÈÎÒâÊý¾Ý
-		MPU_9250_DISENABLE;//	MPU9250_CS=1;  //Ê§ÄÜMPU9250
+	  SPI1_ReadWriteByte(reg|0x80); //regï¿½ï¿½Ö·+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	  reg_val=SPI1_ReadWriteByte(0xff);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		MPU_9250_DISENABLE;//	MPU9250_CS=1;  //Ê§ï¿½ï¿½MPU9250
 	return(reg_val);
 }
 /***************************************************************/
-// MPUÄÚ²¿i2c Ð´Èë
+// MPUï¿½Ú²ï¿½i2c Ð´ï¿½ï¿½
 //I2C_SLVx_ADDR:  MPU9250_AK8963_ADDR
 //I2C_SLVx_REG:   reg
 //I2C_SLVx_Data out:  value
@@ -97,13 +100,13 @@ u8 MPU9250_Read_Reg(u8 reg)
 static void i2c_Mag_write(u8 reg,u8 value)
 {
 	u16 j=500;
-	MPU9250_Write_Reg(I2C_SLV0_ADDR ,MPU9250_AK8963_ADDR);//ÉèÖÃ´ÅÁ¦¼ÆµØÖ·,mode: write
+	MPU9250_Write_Reg(I2C_SLV0_ADDR ,MPU9250_AK8963_ADDR);//ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½Æµï¿½Ö·,mode: write
 	MPU9250_Write_Reg(I2C_SLV0_REG ,reg);//set reg addr
-	MPU9250_Write_Reg(I2C_SLV0_DO ,value);//send value	
-	while(j--);//´Ë´¦ÒòÎªMPUÄÚ²¿I2C¶ÁÈ¡ËÙ¶È½ÏÂý£¬ÑÓÊ±µÈ´ýÄÚ²¿Ð´Íê±Ï
+	MPU9250_Write_Reg(I2C_SLV0_DO ,value);//send value
+	while(j--);//ï¿½Ë´ï¿½ï¿½ï¿½ÎªMPUï¿½Ú²ï¿½I2Cï¿½ï¿½È¡ï¿½Ù¶È½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½È´ï¿½ï¿½Ú²ï¿½Ð´ï¿½ï¿½ï¿½ï¿½
 }
 /***************************************************************/
-// MPUÄÚ²¿i2c ¶ÁÈ¡
+// MPUï¿½Ú²ï¿½i2c ï¿½ï¿½È¡
 //I2C_SLVx_ADDR:  MPU9250_AK8963_ADDR
 //I2C_SLVx_REG:   reg
 //return value:   EXT_SENS_DATA_00 register value
@@ -111,131 +114,133 @@ static void i2c_Mag_write(u8 reg,u8 value)
 static u8 i2c_Mag_read(u8 reg)
 {
 	u16 j=5000;
-	MPU9250_Write_Reg(I2C_SLV0_ADDR ,MPU9250_AK8963_ADDR|0x80); //ÉèÖÃ´ÅÁ¦¼ÆµØÖ·£¬mode£ºread
+	MPU9250_Write_Reg(I2C_SLV0_ADDR ,MPU9250_AK8963_ADDR|0x80); //ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½Æµï¿½Ö·ï¿½ï¿½modeï¿½ï¿½read
 	MPU9250_Write_Reg(I2C_SLV0_REG ,reg);// set reg addr
 	MPU9250_Write_Reg(I2C_SLV0_DO ,0xff);//read
-	while(j--);//´Ë´¦ÒòÎªMPUÄÚ²¿I2C¶ÁÈ¡ËÙ¶È½ÏÂý£¬±ØÐëÑÓÊ±µÈ´ýÄÚ²¿¶ÁÈ¡Íê±Ï
+	while(j--);//ï¿½Ë´ï¿½ï¿½ï¿½ÎªMPUï¿½Ú²ï¿½I2Cï¿½ï¿½È¡ï¿½Ù¶È½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½È´ï¿½ï¿½Ú²ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
 	return MPU9250_Read_Reg(EXT_SENS_DATA_00);
 }
 
-//****************³õÊ¼»¯MPU9250£¬¸ù¾ÝÐèÒªÇë²Î¿¼pdf½øÐÐÐÞ¸Ä************************
+//****************ï¿½ï¿½Ê¼ï¿½ï¿½MPU9250ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Î¿ï¿½pdfï¿½ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½************************
 void Init_MPU9250(void)
-{	
-	MPU9250_Write_Reg(PWR_MGMT_1, 0x00);	//½â³ýÐÝÃß×´Ì¬
-	MPU9250_Write_Reg(CONFIG, 0x07);      //µÍÍ¨ÂË²¨ÆµÂÊ£¬µäÐÍÖµ£º0x07(3600Hz)´Ë¼Ä´æÆ÷ÄÚ¾ö¶¨Internal_Sample_Rate==8K
-	
-/**********************Init SLV0 i2c**********************************/	
+{
+	MPU9250_Write_Reg(PWR_MGMT_1, 0x00);	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
+	MPU9250_Write_Reg(CONFIG, 0x07);      //ï¿½ï¿½Í¨ï¿½Ë²ï¿½Æµï¿½Ê£ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½0x07(3600Hz)ï¿½Ë¼Ä´ï¿½ï¿½ï¿½ï¿½Ú¾ï¿½ï¿½ï¿½Internal_Sample_Rate==8K
+
+/**********************Init SLV0 i2c**********************************/
 //Use SPI-bus read slave0
-	MPU9250_Write_Reg(INT_PIN_CFG ,0x30);// INT Pin / Bypass Enable Configuration  
+	MPU9250_Write_Reg(INT_PIN_CFG ,0x30);// INT Pin / Bypass Enable Configuration
 	MPU9250_Write_Reg(I2C_MST_CTRL,0x4d);//I2C MAster mode and Speed 400 kHz
-	MPU9250_Write_Reg(USER_CTRL ,0x20); // I2C_MST _EN 
-	MPU9250_Write_Reg(I2C_MST_DELAY_CTRL ,0x01);//ÑÓÊ±Ê¹ÄÜI2C_SLV0 _DLY_ enable 	
+	MPU9250_Write_Reg(USER_CTRL ,0x20); // I2C_MST _EN
+	MPU9250_Write_Reg(I2C_MST_DELAY_CTRL ,0x01);//ï¿½ï¿½Ê±Ê¹ï¿½ï¿½I2C_SLV0 _DLY_ enable
 	MPU9250_Write_Reg(I2C_SLV0_CTRL ,0x81); //enable IIC	and EXT_SENS_DATA==1 Byte
-	
-/*******************Init GYRO and ACCEL******************************/	
-	MPU9250_Write_Reg(SMPLRT_DIV, 0x07);  //ÍÓÂÝÒÇ²ÉÑùÂÊ£¬µäÐÍÖµ£º0x07(1kHz) (SAMPLE_RATE= Internal_Sample_Rate / (1 + SMPLRT_DIV) )
-	MPU9250_Write_Reg(GYRO_CONFIG, 0x18); //ÍÓÂÝÒÇ×Ô¼ì¼°²âÁ¿·¶Î§£¬µäÐÍÖµ£º0x18(²»×Ô¼ì£¬2000deg/s)
-	MPU9250_Write_Reg(ACCEL_CONFIG, 0x18);//¼ÓËÙ¼Æ×Ô¼ì¡¢²âÁ¿·¶Î§¼°¸ßÍ¨ÂË²¨ÆµÂÊ£¬µäÐÍÖµ£º0x18(²»×Ô¼ì£¬16G)
-	MPU9250_Write_Reg(ACCEL_CONFIG_2, 0x08);//¼ÓËÙ¼Æ¸ßÍ¨ÂË²¨ÆµÂÊ µäÐÍÖµ £º0x08  £¨1.13kHz£©	
-		
+
+/*******************Init GYRO and ACCEL******************************/
+	MPU9250_Write_Reg(SMPLRT_DIV, 0x07);  //ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½ï¿½Ê£ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½0x07(1kHz) (SAMPLE_RATE= Internal_Sample_Rate / (1 + SMPLRT_DIV) )
+	MPU9250_Write_Reg(GYRO_CONFIG, 0x18); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ì¼°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½0x18(ï¿½ï¿½ï¿½Ô¼ì£¬2000deg/s)
+	MPU9250_Write_Reg(ACCEL_CONFIG, 0x18);//ï¿½ï¿½ï¿½Ù¼ï¿½ï¿½Ô¼ì¡¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î§ï¿½ï¿½ï¿½ï¿½Í¨ï¿½Ë²ï¿½Æµï¿½Ê£ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½0x18(ï¿½ï¿½ï¿½Ô¼ì£¬16G)
+	MPU9250_Write_Reg(ACCEL_CONFIG_2, 0x08);//ï¿½ï¿½ï¿½Ù¼Æ¸ï¿½Í¨ï¿½Ë²ï¿½Æµï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Öµ ï¿½ï¿½0x08  ï¿½ï¿½1.13kHzï¿½ï¿½
+
 /**********************Init MAG **********************************/
 	i2c_Mag_write(AK8963_CNTL2_REG,AK8963_CNTL2_SRST); // Reset AK8963
-	i2c_Mag_write(AK8963_CNTL1_REG,0x12); // use i2c to set AK8963 working on Continuous measurement mode1 & 16-bit output	
+	i2c_Mag_write(AK8963_CNTL1_REG,0x12); // use i2c to set AK8963 working on Continuous measurement mode1 & 16-bit output
 }
 
-//************************¼ÓËÙ¶È¶ÁÈ¡**************************/
+//************************ï¿½ï¿½ï¿½Ù¶È¶ï¿½È¡**************************/
 void READ_MPU9250_ACCEL(void)//
-{ 
+{
 
-   BUF[0]=MPU9250_Read_Reg(ACCEL_XOUT_L); 
+   BUF[0]=MPU9250_Read_Reg(ACCEL_XOUT_L);
    BUF[1]=MPU9250_Read_Reg(ACCEL_XOUT_H);
-   mpu_value.Accel[0]=	(BUF[1]<<8)|BUF[0];
-   mpu_value.Accel[0]/=164; 						   //¶ÁÈ¡¼ÆËãXÖáÊý¾Ý
+   mpu_source_value.Accel[0]=	(BUF[1]<<8)|BUF[0];
+   mpu_value.Accel[0] = mpu_source_value.Accel[0] / 164.0; 						   //ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
    BUF[2]=MPU9250_Read_Reg(ACCEL_YOUT_L);
    BUF[3]=MPU9250_Read_Reg(ACCEL_YOUT_H);
-   mpu_value.Accel[1]=	(BUF[3]<<8)|BUF[2];
-   mpu_value.Accel[1]/=164; 						   //¶ÁÈ¡¼ÆËãYÖáÊý¾Ý
-   BUF[4]=MPU9250_Read_Reg(ACCEL_ZOUT_L); 
+   mpu_source_value.Accel[1]=	(BUF[3]<<8)|BUF[2];
+   mpu_value.Accel[1] = mpu_source_value.Accel[1] / 164.0; 						   //ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Yï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+   BUF[4]=MPU9250_Read_Reg(ACCEL_ZOUT_L);
    BUF[5]=MPU9250_Read_Reg(ACCEL_ZOUT_H);
-   mpu_value.Accel[2]=  (BUF[5]<<8)|BUF[4];
-   mpu_value.Accel[2]/=164; 					      //¶ÁÈ¡¼ÆËãZÖáÊý¾Ý 
+   mpu_source_value.Accel[2]= (BUF[5]<<8)|BUF[4];
+   mpu_value.Accel[2] = mpu_source_value.Accel[2] / 164.0; 					      //ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Zï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 }
-/**********************ÍÓÂÝÒÇ¶ÁÈ¡*****************************/
+/**********************ï¿½ï¿½ï¿½ï¿½ï¿½Ç¶ï¿½È¡*****************************/
 void READ_MPU9250_GYRO(void)
-{ 
+{
 
-   BUF[0]=MPU9250_Read_Reg(GYRO_XOUT_L); 
+   BUF[0]=MPU9250_Read_Reg(GYRO_XOUT_L);
    BUF[1]=MPU9250_Read_Reg(GYRO_XOUT_H);
-   mpu_value.Gyro[0]=	(BUF[1]<<8)|BUF[0];
-   mpu_value.Gyro[0]/=16.4; 						   //¶ÁÈ¡¼ÆËãXÖáÊý¾Ý
+   mpu_source_value.Gyro[0]= (BUF[1]<<8)|BUF[0];
+   mpu_value.Gyro[0] = mpu_source_value.Gyro[0] / 16.4 * PI / 180; 						   //ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
    BUF[2]=MPU9250_Read_Reg(GYRO_YOUT_L);
    BUF[3]=MPU9250_Read_Reg(GYRO_YOUT_H);
-   mpu_value.Gyro[1]=	(BUF[3]<<8)|BUF[2];
-   mpu_value.Gyro[1]/=16.4; 						   //¶ÁÈ¡¼ÆËãYÖáÊý¾Ý
+   mpu_source_value.Gyro[1]= (BUF[3]<<8)|BUF[2];
+   mpu_value.Gyro[1] = mpu_source_value.Gyro[1] / 16.4 * PI / 180;  						   //ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Yï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
    BUF[4]=MPU9250_Read_Reg(GYRO_ZOUT_L);
    BUF[5]=MPU9250_Read_Reg(GYRO_ZOUT_H);
-   mpu_value.Gyro[2]=	(BUF[5]<<8)|BUF[4];
-   mpu_value.Gyro[2]/=16.4; 					       //¶ÁÈ¡¼ÆËãZÖáÊý¾Ý
+   mpu_source_value.Gyro[2]=	(BUF[5]<<8)|BUF[4];
+   mpu_value.Gyro[2] = mpu_source_value.Gyro[2] / 16.4 * PI / 180;  					       //ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Zï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 }
 
 
-/**********************´ÅÁ¦¼Æ¶ÁÈ¡***************************/
-//i2c_Mag_read(AK8963_ST2_REG) ´Ë²½¶ÁÈ¡²»¿ÉÊ¡ÂÔ
-//Êý¾Ý¶ÁÈ¡½áÊø¼Ä´æÆ÷£¬reading this register means data reading end
-//AK8963_ST2_REG Í¬Ê±¾ßÓÐÊý¾Ý·ÇÕý³£Òç³ö¼ì²â¹¦ÄÜ
-//ÏêÇé²Î¿¼ MPU9250 PDF
+/**********************ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½È¡***************************/
+//i2c_Mag_read(AK8963_ST2_REG) ï¿½Ë²ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ê¡ï¿½ï¿½
+//ï¿½ï¿½ï¿½Ý¶ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½reading this register means data reading end
+//AK8963_ST2_REG Í¬Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â¹¦ï¿½ï¿½
+//ï¿½ï¿½ï¿½ï¿½ï¿½Î¿ï¿½ MPU9250 PDF
 /**********************************************************/
 void READ_MPU9250_MAG(void)
-{ 	
-	u8 x_axis,y_axis,z_axis; 
-	
-	x_axis=i2c_Mag_read(AK8963_ASAX);// XÖáÁéÃô¶Èµ÷ÕûÖµ
+{
+	u8 x_axis,y_axis,z_axis;
+
+	x_axis=i2c_Mag_read(AK8963_ASAX);// Xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Èµï¿½ï¿½ï¿½Öµ
 	y_axis=i2c_Mag_read(AK8963_ASAY);
 	z_axis=i2c_Mag_read(AK8963_ASAZ);
-	
+
 	if((i2c_Mag_read(AK8963_ST1_REG)&AK8963_ST1_DOR)==0)//data ready
 	{
-			//¶ÁÈ¡¼ÆËãXÖáÊý¾Ý
-		 BUF[0]=i2c_Mag_read(MAG_XOUT_L); //Low data	
-		 if((i2c_Mag_read(AK8963_ST2_REG)&AK8963_ST2_HOFL)==1)// data reading end register & check Magnetic sensor overflow occurred 
+			//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		 BUF[0]=i2c_Mag_read(MAG_XOUT_L); //Low data
+		 if((i2c_Mag_read(AK8963_ST2_REG)&AK8963_ST2_HOFL)==1)// data reading end register & check Magnetic sensor overflow occurred
 		 {
 			 BUF[0]=i2c_Mag_read(MAG_XOUT_L);//reload data
-		 } 
-		 BUF[1]=i2c_Mag_read(MAG_XOUT_H); //High data	
+		 }
+		 BUF[1]=i2c_Mag_read(MAG_XOUT_H); //High data
 		 if((i2c_Mag_read(AK8963_ST2_REG)&AK8963_ST2_HOFL)==1)// data reading end register
 		 {
 			 BUF[1]=i2c_Mag_read(MAG_XOUT_H);
 		 }
-		 mpu_value.Mag[0]=((BUF[1]<<8)|BUF[0])*(((x_axis-128)>>8)+1);		//ÁéÃô¶È¾ÀÕý ¹«Ê½¼û/RM-MPU-9250A-00 PDF/ 5.13	
-		 
-		//¶ÁÈ¡¼ÆËãYÖáÊý¾Ý
-			BUF[2]=i2c_Mag_read(MAG_YOUT_L); //Low data	
+		 mpu_source_value.Mag[0]=((BUF[1]<<8)|BUF[0])*(((x_axis-128)>>8)+1);		//ï¿½ï¿½ï¿½ï¿½ï¿½È¾ï¿½ï¿½ï¿½ ï¿½ï¿½Ê½ï¿½ï¿½/RM-MPU-9250A-00 PDF/ 5.13
+		 mpu_value.Mag[0] = ((float)mpu_source_value.Mag[0]);
+
+		//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Yï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			BUF[2]=i2c_Mag_read(MAG_YOUT_L); //Low data
 		 if((i2c_Mag_read(AK8963_ST2_REG)&AK8963_ST2_HOFL)==1)// data reading end register
 		 {
 			 BUF[2]=i2c_Mag_read(MAG_YOUT_L);
-		 }		 
-		 BUF[3]=i2c_Mag_read(MAG_YOUT_H); //High data	
+		 }
+		 BUF[3]=i2c_Mag_read(MAG_YOUT_H); //High data
 		 if((i2c_Mag_read(AK8963_ST2_REG)&AK8963_ST2_HOFL)==1)// data reading end register
 		 {
 			 BUF[3]=i2c_Mag_read(MAG_YOUT_H);
 		 }
-		  mpu_value.Mag[1]=((BUF[3]<<8)|BUF[2])*(((y_axis-128)>>8)+1);	
-		 
-		//¶ÁÈ¡¼ÆËãZÖáÊý¾Ý
-		 BUF[4]=i2c_Mag_read(MAG_ZOUT_L); //Low data	
+		  mpu_source_value.Mag[1]=((BUF[3]<<8)|BUF[2])*(((y_axis-128)>>8)+1);
+			mpu_value.Mag[1] = (float)mpu_source_value.Mag[1];
+
+
+
+		//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Zï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		 BUF[4]=i2c_Mag_read(MAG_ZOUT_L); //Low data
 		 if((i2c_Mag_read(AK8963_ST2_REG)&AK8963_ST2_HOFL)==1)// data reading end register
 		 {
 			 BUF[4]=i2c_Mag_read(MAG_ZOUT_L);
-		 }	 
-		 BUF[5]=i2c_Mag_read(MAG_ZOUT_H); //High data	
+		 }
+		 BUF[5]=i2c_Mag_read(MAG_ZOUT_H); //High data
 		 if((i2c_Mag_read(AK8963_ST2_REG)&AK8963_ST2_HOFL)==1)// data reading end register
 		 {
 			 BUF[5]=i2c_Mag_read(MAG_ZOUT_H);
 		 }
-		  mpu_value.Mag[2]=((BUF[5]<<8)|BUF[4])*(((z_axis-128)>>8)+1);	
-	}					       
+		  mpu_source_value.Mag[2]=((BUF[5]<<8)|BUF[4])*(((z_axis-128)>>8)+1);
+			mpu_value.Mag[2] = (float)mpu_source_value.Mag[2];
+	}
 }
-
-
-

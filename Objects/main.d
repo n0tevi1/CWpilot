@@ -32,3 +32,10 @@
 .\objects\main.o: .\Hardware\inc\sys.h
 .\objects\main.o: .\Hardware\inc\spi.h
 .\objects\main.o: E:\Programs\MDK\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\main.o: .\Hardware\inc\imu.h
+<<<<<<< HEAD
+.\objects\main.o: .\Hardware\inc\delay.h
+.\objects\main.o: .\Hardware\inc\control.h
+.\objects\main.o: .\Hardware\inc\led.h
+=======
+>>>>>>> origin/master

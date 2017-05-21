@@ -554,6 +554,21 @@
               <FileType>1</FileType>
               <FilePath>.\Hardware\src\spi.c</FilePath>
             </File>
+            <File>
+              <FileName>imu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\src\imu.c</FilePath>
+            </File>
+            <File>
+              <FileName>delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\src\delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\src\control.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

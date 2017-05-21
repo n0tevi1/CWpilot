@@ -4,22 +4,24 @@
 #include "stm32f10x_spi.h"
 #include "stm32f10x_rcc.h"
 
-// ¶¨ÒåMPU9250ÄÚ²¿µØÖ·
-/*****************************************************************/
-#define	SMPLRT_DIV		                      0x19	//ÍÓÂÝÒÇ²ÉÑùÂÊ
-#define	CONFIG			                        0x1A	
-#define	GYRO_CONFIG		                      0x1B	
-#define	ACCEL_CONFIG	                      0x1C	
-#define	ACCEL_CONFIG_2                      0x1D 
 
-#define INT_PIN_CFG                         0x37 //ÖÐ¶ÏÅäÖÃ
+#define PI  (float)3.1415926535
+// ï¿½ï¿½ï¿½ï¿½MPU9250ï¿½Ú²ï¿½ï¿½ï¿½Ö·
+/*****************************************************************/
+#define	SMPLRT_DIV		                      0x19	//ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½ï¿½ï¿½
+#define	CONFIG			                        0x1A
+#define	GYRO_CONFIG		                      0x1B
+#define	ACCEL_CONFIG	                      0x1C
+#define	ACCEL_CONFIG_2                      0x1D
+
+#define INT_PIN_CFG                         0x37 //ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½
 #define USER_CTRL                           0x6a
 #define I2C_MST_CTRL                        0x24
 #define I2C_MST_DELAY_CTRL                  0x67
 //--------------------i2c slv0-------------------------------//
-#define I2C_SLV0_ADDR                       0x25  
+#define I2C_SLV0_ADDR                       0x25
 #define I2C_SLV0_REG                        0x26
-#define I2C_SLV0_CTRL                       0x27 
+#define I2C_SLV0_CTRL                       0x27
 #define I2C_SLV0_DO                         0x63 //output reg
 //--------------------AK8963 reg addr------------------------//
 #define MPU9250_AK8963_ADDR                 0x0C  //AKM addr
@@ -30,11 +32,11 @@
 #define AK8963_ST1_DOR                      0x02
 #define AK8963_ST1_DRDY                     0x01 //Data Ready
 #define AK8963_ST2_BITM                     0x10
-#define AK8963_ST2_HOFL                     0x08 // Magnetic sensor overflow 
+#define AK8963_ST2_HOFL                     0x08 // Magnetic sensor overflow
 #define AK8963_CNTL1_REG                    0x0A
 #define AK8963_CNTL2_REG                    0x0B
 #define AK8963_CNTL2_SRST                   0x01 //soft Reset
-#define AK8963_ASAX                         0x10 //X-axis sensitivity adjustment value 
+#define AK8963_ASAX                         0x10 //X-axis sensitivity adjustment value
 #define AK8963_ASAY                         0x11 //Y-axis sensitivity adjustment value
 #define AK8963_ASAZ                         0x12 //Z-axis sensitivity adjustment value
 //--------------------9axis  reg addr-----------------------//
@@ -49,12 +51,12 @@
 #define	TEMP_OUT_L		0x42
 
 #define	GYRO_XOUT_H		0x43
-#define	GYRO_XOUT_L		0x44	
+#define	GYRO_XOUT_L		0x44
 #define	GYRO_YOUT_H		0x45
 #define	GYRO_YOUT_L		0x46
 #define	GYRO_ZOUT_H		0x47
 #define	GYRO_ZOUT_L		0x48
-		
+
 #define MAG_XOUT_L		0x03
 #define MAG_XOUT_H		0x04
 #define MAG_YOUT_L		0x05
@@ -62,24 +64,30 @@
 #define MAG_ZOUT_L		0x07
 #define MAG_ZOUT_H		0x08
 //--------------------other reg addr-----------------------//
-#define	PWR_MGMT_1		0x6B	//µçÔ´¹ÜÀí£¬µäÐÍÖµ£º0x00(Õý³£ÆôÓÃ)
-#define	WHO_AM_I		  0x75	//IDµØÖ·¼Ä´æÆ÷(ÕýÈ·ÊýÖµ0x71£¬Ö»¶Á)
+#define	PWR_MGMT_1		0x6B	//ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½0x00(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
+#define	WHO_AM_I		  0x75	//IDï¿½ï¿½Ö·ï¿½Ä´ï¿½ï¿½ï¿½(ï¿½ï¿½È·ï¿½ï¿½Öµ0x71ï¿½ï¿½Ö»ï¿½ï¿½)
 
-#define EXT_SENS_DATA_00    0x49  //MPU9250 IICÍâ¹ÒÆ÷¼þ¶ÁÈ¡·µ»Ø¼Ä´æÆ÷00
-#define EXT_SENS_DATA_01    0x4a  //MPU9250 IICÍâ¹ÒÆ÷¼þ¶ÁÈ¡·µ»Ø¼Ä´æÆ÷01
-#define EXT_SENS_DATA_02    0x4b  //MPU9250 IICÍâ¹ÒÆ÷¼þ¶ÁÈ¡·µ»Ø¼Ä´æÆ÷02
-#define EXT_SENS_DATA_03    0x4c  //MPU9250 IICÍâ¹ÒÆ÷¼þ¶ÁÈ¡·µ»Ø¼Ä´æÆ÷03
+#define EXT_SENS_DATA_00    0x49  //MPU9250 IICï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ø¼Ä´ï¿½ï¿½ï¿½00
+#define EXT_SENS_DATA_01    0x4a  //MPU9250 IICï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ø¼Ä´ï¿½ï¿½ï¿½01
+#define EXT_SENS_DATA_02    0x4b  //MPU9250 IICï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ø¼Ä´ï¿½ï¿½ï¿½02
+#define EXT_SENS_DATA_03    0x4c  //MPU9250 IICï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ø¼Ä´ï¿½ï¿½ï¿½03
 
 /************************SPI CS ********************************/
 #define MPU_9250_DISENABLE  GPIOA->BSRR = GPIO_Pin_0;//Æ¬Ñ¡
 #define MPU_9250_ENABLE  GPIOA->BRR = GPIO_Pin_0;
 
+typedef struct{
+	float Accel[3];//Accel X,Y,Z
+	float Gyro[3];//Gyro X,Y,Z
+	float Mag[3];	//Mag X,Y,Z
+}MPU_value;
+extern MPU_value mpu_value;
 
 void spi_Init(void);
 void Init_MPU9250(void);
 u8 MPU9250_Write_Reg(u8 reg,u8 value);//SPIÐ´
-u8 MPU9250_Read_Reg(u8 reg);//SPI¶Á
-void READ_MPU9250_ACCEL(void);//¶ÁÈ¡¼ÓËÙ¶È
-void READ_MPU9250_GYRO(void);//¶ÁÈ¡ÍÓÂÝÒÇ
-void READ_MPU9250_MAG(void);//¶ÁÈ¡µØ´Å¼Æ
+u8 MPU9250_Read_Reg(u8 reg);//SPIï¿½ï¿½
+void READ_MPU9250_ACCEL(void);//ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ù¶ï¿½
+void READ_MPU9250_GYRO(void);//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+void READ_MPU9250_MAG(void);//ï¿½ï¿½È¡ï¿½Ø´Å¼ï¿½
 #endif

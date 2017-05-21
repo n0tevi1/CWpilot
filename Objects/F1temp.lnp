@@ -30,6 +30,10 @@
 ".\objects\timer.o"
 ".\objects\sys.o"
 ".\objects\spi.o"
+".\objects\imu.o"
+".\objects\delay.o"
+".\objects\control.o"
+".\objects\led.o"
 --strict --scatter ".\Objects\F1temp.sct"
 --summary_stderr --info summarysizes --map --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
