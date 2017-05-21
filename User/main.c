@@ -3,6 +3,7 @@
 #include "spi.h"
 #include "imu.h"
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "delay.h"
 #include "control.h"
 #include "led.h"
@@ -15,11 +16,17 @@
 int OutputPWM[4] = {810, 810, 810, 810}; //��·PWM����, 0~900
 >>>>>>> origin/master
 
+=======
+
+int OutputPWM[4] = {810, 810, 810, 810}; //��·PWM����, 0~900
+
+>>>>>>> origin/master
 int main(void){
 	 //Initialization
 	TIM3_PWM_Init(899,0);	 //����Ƶ��PWMƵ��=72000000/900=80Khz
 	TIM4_Init();
 	IMU_init();
+<<<<<<< HEAD
 <<<<<<< HEAD
 	LED_GPIO_Configuration();
 	Diff_Integration_Initialize();
@@ -31,11 +38,15 @@ int main(void){
 =======
 	while(mpu_value.Mag[0] == 0){
 >>>>>>> origin/master
+=======
+	while(mpu_value.Mag[0] == 0){
+>>>>>>> origin/master
 		spi_Init();
 		Init_MPU9250();
 		READ_MPU9250_MAG();
 		READ_MPU9250_ACCEL();
 		READ_MPU9250_GYRO();
+<<<<<<< HEAD
 <<<<<<< HEAD
 		delay_ms(100);
 		LED2OFF;
@@ -61,6 +72,8 @@ int main(void){
 			RefreshMotor();
 			LED3ON;
 =======
+=======
+>>>>>>> origin/master
 	}
 	while(1){
 		if(loop50HzFlag){
@@ -78,6 +91,9 @@ int main(void){
 			TIM_SetCompare2(TIM3,OutputPWM[1]);
 			TIM_SetCompare3(TIM3,OutputPWM[2]);
 			TIM_SetCompare4(TIM3,OutputPWM[3]);
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
 		}
 	}

@@ -699,7 +699,11 @@ I (.\Libraries\inc\stm32f10x_tim.h)(0x4D783BB4)
 I (.\Libraries\inc\stm32f10x_usart.h)(0x4D783BB4)
 I (.\Libraries\inc\misc.h)(0x4D783BB4)
 <<<<<<< HEAD
+<<<<<<< HEAD
 F (.\User\main.c)(0x5921523C)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I .\Libraries\inc -I .\Libraries\src -I .\CMSIS -I .\Hardware\inc -I \Hardware\src -I .\User-I.\RTE\_Target_1-IE:\Programs\MDK\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IE:\Programs\MDK\ARM\CMSIS\Include-D__UVISION_VERSION="523" -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+=======
+F (.\User\main.c)(0x591C23F2)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I .\Libraries\inc -I .\Libraries\src -I .\CMSIS -I .\Hardware\inc -I \Hardware\src -I .\User-I.\RTE\_Target_1-IE:\Programs\MDK\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IE:\Programs\MDK\ARM\CMSIS\Include-D__UVISION_VERSION="523" -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+>>>>>>> origin/master
 =======
 F (.\User\main.c)(0x591C23F2)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I .\Libraries\inc -I .\Libraries\src -I .\CMSIS -I .\Hardware\inc -I \Hardware\src -I .\User-I.\RTE\_Target_1-IE:\Programs\MDK\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IE:\Programs\MDK\ARM\CMSIS\Include-D__UVISION_VERSION="523" -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
 >>>>>>> origin/master
@@ -736,10 +740,14 @@ I (.\Hardware\inc\sys.h)(0x590ED8CE)
 I (.\Hardware\inc\spi.h)(0x591313EE)
 I (E:\Programs\MDK\ARM\ARMCC\include\stdbool.h)(0x57F606B8)
 <<<<<<< HEAD
+<<<<<<< HEAD
 I (.\Hardware\inc\imu.h)(0x591C6632)
 I (.\Hardware\inc\delay.h)(0x5913201C)
 I (.\Hardware\inc\control.h)(0x5921528F)
 I (.\Hardware\inc\led.h)(0x592149BC)
+=======
+I (.\Hardware\inc\imu.h)(0x591311F6)
+>>>>>>> origin/master
 =======
 I (.\Hardware\inc\imu.h)(0x591311F6)
 >>>>>>> origin/master
@@ -837,6 +845,7 @@ I (.\Libraries\inc\stm32f10x_usart.h)(0x4D783BB4)
 I (.\Libraries\inc\stm32f10x_wwdg.h)(0x4D783BB4)
 I (.\Libraries\inc\misc.h)(0x4D783BB4)
 <<<<<<< HEAD
+<<<<<<< HEAD
 F (.\Hardware\src\spi.c)(0x591313FD)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I .\Libraries\inc -I .\Libraries\src -I .\CMSIS -I .\Hardware\inc -I \Hardware\src -I .\User-I.\RTE\_Target_1-IE:\Programs\MDK\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IE:\Programs\MDK\ARM\CMSIS\Include-D__UVISION_VERSION="523" -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD-o .\objects\spi.o --omf_browse .\objects\spi.crf --depend .\objects\spi.d)
 I (.\Hardware\inc\spi.h)(0x591313EE)
 I (E:\Programs\MDK\ARM\ARMCC\include\stdbool.h)(0x57F606B8)
@@ -870,6 +879,9 @@ I (.\Libraries\inc\stm32f10x_wwdg.h)(0x4D783BB4)
 I (.\Libraries\inc\misc.h)(0x4D783BB4)
 F (.\Hardware\src\imu.c)(0x591C5F57)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I .\Libraries\inc -I .\Libraries\src -I .\CMSIS -I .\Hardware\inc -I \Hardware\src -I .\User-I.\RTE\_Target_1-IE:\Programs\MDK\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IE:\Programs\MDK\ARM\CMSIS\Include-D__UVISION_VERSION="523" -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD-o .\objects\imu.o --omf_browse .\objects\imu.crf --depend .\objects\imu.d)
 I (.\Hardware\inc\imu.h)(0x591C6632)
+=======
+F (.\Hardware\src\spi.c)(0x591C23F4)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I .\Libraries\inc -I .\Libraries\src -I .\CMSIS -I .\Hardware\inc -I \Hardware\src -I .\User-I.\RTE\_Target_1-IE:\Programs\MDK\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IE:\Programs\MDK\ARM\CMSIS\Include-D__UVISION_VERSION="523" -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD-o .\objects\spi.o --omf_browse .\objects\spi.crf --depend .\objects\spi.d)
+>>>>>>> origin/master
 =======
 F (.\Hardware\src\spi.c)(0x591C23F4)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I .\Libraries\inc -I .\Libraries\src -I .\CMSIS -I .\Hardware\inc -I \Hardware\src -I .\User-I.\RTE\_Target_1-IE:\Programs\MDK\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-IE:\Programs\MDK\ARM\CMSIS\Include-D__UVISION_VERSION="523" -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD-o .\objects\spi.o --omf_browse .\objects\spi.crf --depend .\objects\spi.d)
 >>>>>>> origin/master

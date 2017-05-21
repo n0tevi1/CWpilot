@@ -4,6 +4,7 @@
 
 int Motor[4];
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 //Define and Sed expected direction
 Direction expected_Direction;
@@ -29,6 +30,8 @@ void InitDirection(void){
   diff_int_Direction.Roll = 0;
   diff_int_Direction.Pitch = 0;
 =======
+=======
+>>>>>>> origin/master
 Direction expected_Direction;
 Direction diff_Direction;
 Direction control_Direction;
@@ -41,12 +44,16 @@ void InitDirection(void){
   expected_Direction.Roll = 0;
   expected_Direction.Pitch = 0;
   expected_Direction.Thr = 500;
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
 
   diff_Direction.Yaw = expected_Direction.Yaw - imu_value.Yaw;
   diff_Direction.Roll = expected_Direction.Roll - imu_value.Roll;
   diff_Direction.Pitch = expected_Direction.Pitch - imu_value.Pitch;
   diff_Direction.Thr = expected_Direction.Thr;
+<<<<<<< HEAD
 <<<<<<< HEAD
 
   //Difference Integration
@@ -61,6 +68,8 @@ void InitDirection(void){
   }
 =======
 >>>>>>> origin/master
+=======
+>>>>>>> origin/master
 }
 
 //calculate the PWM output rate of 4 motors:
@@ -69,6 +78,7 @@ void InitDirection(void){
 //RightUpper  Motor2  PC8
 //LeftUpper   Motor3  PC9
 void CalPID(void){
+<<<<<<< HEAD
 <<<<<<< HEAD
   control_Direction.Roll = PID_D * mpu_value.Gyro[0] + PID_P * diff_Direction.Roll + PID_I * diff_int_Direction.Roll;
   control_Direction.Pitch = PID_D * mpu_value.Gyro[1] + PID_P * diff_Direction.Pitch + PID_I * diff_int_Direction.Pitch;
@@ -85,6 +95,8 @@ void CalPID(void){
   Motor[3] = (int16_t)(control_Direction.Thr - control_Direction.Pitch + control_Direction.Roll);    //M4
   Motor[1] = (int16_t)(control_Direction.Thr + control_Direction.Pitch - control_Direction.Roll);    //M2
 =======
+=======
+>>>>>>> origin/master
   control_Direction.Roll = PID_D * mpu_value.Gyro[0] + PID_P * diff_Direction.Roll;
   control_Direction.Pitch = PID_D * mpu_value.Gyro[1] + PID_P * diff_Direction.Pitch;
   control_Direction.Yaw = PID_D * mpu_value.Gyro[2] + PID_P * diff_Direction.Yaw;
@@ -94,6 +106,9 @@ void CalPID(void){
   Motor[0] = (int16_t)(control_Direction.Thr + control_Direction.Pitch + control_Direction.Roll - control_Direction.Yaw );    //M1
   Motor[3] = (int16_t)(control_Direction.Thr - control_Direction.Pitch + control_Direction.Roll + control_Direction.Yaw );    //M4
   Motor[1] = (int16_t)(control_Direction.Thr + control_Direction.Pitch - control_Direction.Roll + control_Direction.Yaw );    //M2
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
 }
 
@@ -111,6 +126,7 @@ void RefreshMotor(void){
   TIM_SetCompare4(TIM3,Motor[3]);
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 void Diff_Integration_Initialize(void){
   expected_Direction.Yaw = 0;
@@ -125,5 +141,7 @@ void Diff_Integration_Initialize(void){
     diff_integration.Roll[i] = 0;
   }
 }
+=======
+>>>>>>> origin/master
 =======
 >>>>>>> origin/master

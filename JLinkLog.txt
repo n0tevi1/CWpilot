@@ -1,5 +1,6 @@
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 T2450 000:033 SEGGER J-Link V6.10i Log File (0000ms, 0012ms total)
 T2450 000:033 DLL Compiled: Oct 25 2016 19:31:51 (0000ms, 0012ms total)
 T2450 000:033 Logging started @ 2017-05-17 23:09 (0000ms, 0012ms total)
@@ -467,6 +468,16 @@ T3BF0 000:043 JLINK_OpenEx(...)
 Firmware: J-Link ARM V8 compiled Jan 31 2018 18:34:52
 Hardware: V8.00
 S/N: 20080643
+=======
+T3BF0 000:043 SEGGER J-Link V6.10i Log File (0000ms, 0016ms total)
+T3BF0 000:043 DLL Compiled: Oct 25 2016 19:31:51 (0000ms, 0016ms total)
+T3BF0 000:043 Logging started @ 2017-05-17 18:11 (0000ms, 0016ms total)
+T3BF0 000:043 JLINK_SetWarnOutHandler(...) (0000ms, 0016ms total)
+T3BF0 000:043 JLINK_OpenEx(...)
+Firmware: J-Link ARM V8 compiled Jan 31 2018 18:34:52
+Hardware: V8.00
+S/N: 20080643
+>>>>>>> origin/master
 Feature(s): RDI,FlashDL,FlashBP,JFlash,GDBFullWEBSRV Webserver running on local port 19080 (0007ms, 0023ms total)
 T3BF0 000:043   returns O.K. (0007ms, 0023ms total)
 T3BF0 000:050 JLINK_SetErrorOutHandler(...) (0000ms, 0023ms total)
@@ -489,4 +500,7 @@ TotalIRLen = ?, IRPrint = 0x..000000000000000000000000 >0xC8 JTAG>
 T3BF0 001:732 JLINK_Close() (0012ms, 0419ms total)
 T3BF0 001:732  (0012ms, 0419ms total)
 T3BF0 001:732 Closed (0012ms, 0419ms total)
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master

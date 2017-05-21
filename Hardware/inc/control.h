@@ -6,7 +6,10 @@
 #define MINPWMDP 0.1f
 #define MAXPWMNUMBER 900
 <<<<<<< HEAD
+<<<<<<< HEAD
 #define INTEGRATION_LENGTH 100
+=======
+>>>>>>> origin/master
 =======
 >>>>>>> origin/master
 
@@ -19,6 +22,7 @@ typedef struct{
   float Thr;
 }Direction;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 typedef struct{
   float Yaw[INTEGRATION_LENGTH];
@@ -28,13 +32,18 @@ typedef struct{
 
 =======
 >>>>>>> origin/master
+=======
+>>>>>>> origin/master
 extern Direction expected_Direction;
 
 void InitDirection(void);
 void CalPID(void);
 void RefreshMotor(void);
 <<<<<<< HEAD
+<<<<<<< HEAD
 void Diff_Integration_Initialize(void);
+=======
+>>>>>>> origin/master
 =======
 >>>>>>> origin/master
 

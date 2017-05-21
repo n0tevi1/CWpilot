@@ -3,7 +3,10 @@
 #include <math.h>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> origin/master
 typedef struct{
   float Roll;    //X axis
   float Pitch;   //Y axis
@@ -12,6 +15,9 @@ typedef struct{
   float Integrate[3];  // integrate of X, Y, Z
 }IMU_value;
 
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
 IMU_value imu_value;
 
@@ -101,7 +107,11 @@ void IMU_AHRSupdate(void) {
 void IMU_getYawPitchRoll(void) {
   imu_value.Yaw = -atan2(2 * imu_value.Quat[1] * imu_value.Quat[2] + 2 * imu_value.Quat[0] * imu_value.Quat[3], -2 * imu_value.Quat[2]*imu_value.Quat[2] - 2 * imu_value.Quat[3] * imu_value.Quat[3] + 1)* 180/PI; // yaw
 <<<<<<< HEAD
+<<<<<<< HEAD
   imu_value.Pitch = -asin(-2 * imu_value.Quat[1] * imu_value.Quat[3] + 2 * imu_value.Quat[0] * imu_value.Quat[2]) 	* 180/PI; // pitch
+=======
+  imu_value.Pitch = -asin(-2 * imu_value.Quat[1] * imu_value.Quat[3] + 2 * imu_value.Quat[0] * imu_value.Quat[2])* 180/PI; // pitch
+>>>>>>> origin/master
 =======
   imu_value.Pitch = -asin(-2 * imu_value.Quat[1] * imu_value.Quat[3] + 2 * imu_value.Quat[0] * imu_value.Quat[2])* 180/PI; // pitch
 >>>>>>> origin/master
